@@ -3,11 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.edu.fsul.controle;
+package br.edu.ifsul.controle;
 
-import br.edu.ifsul.dao.LocatarioDao;
-import br.edu.ifsul.modelo.Locatario;
-import br.edu.ifsul.modelo.Pessoa;
+import br.edu.ifsul.dao.RecursoDao;
+import br.edu.ifsul.modelo.Recurso;
 import br.edu.ifsul.util.UtilMensagens;
 import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
@@ -17,26 +16,25 @@ import javax.faces.bean.SessionScoped;
  *
  * @author Felipe
  */
-@ManagedBean(name = "controleLocatario")
+@ManagedBean(name = "controleRecurso")
 @SessionScoped
-public class ControleLocatario extends Pessoa implements Serializable{
-    private LocatarioDao<Locatario> dao;
-    private Locatario objeto;
+public class ControleRecurso implements Serializable{
+    private RecursoDao<Recurso> dao;
+    private Recurso objeto;
 
-    public ControleLocatario() {
-        dao = new LocatarioDao<>();
+    public ControleRecurso() {
+        dao = new RecursoDao<>();
     }
     
     public String listar(){
-        return "/privado/locatario/listar?faces-redirect=true";
+        return "/privado/recurso/listar?faces-redirect=true";
     }
     
-    public String novo(){
-        objeto = new Locatario();
-        return "formulario";
+    public void novo(){
+        objeto = new Recurso();
     }
     
-    public String salvar(){
+    public void salvar(){
         boolean persistiu;
         if(objeto.getId() == null){
             persistiu = dao.persist(objeto);
@@ -45,21 +43,13 @@ public class ControleLocatario extends Pessoa implements Serializable{
         }
         if(persistiu){
             UtilMensagens.mensagemInformacao(dao.getMensagem());
-            return "listar";
         }else{
             UtilMensagens.mensagemErro(dao.getMensagem());
-            return "formulario";
         }
     }
     
-    public String cancelar(){
-        objeto = null;
-        return "listar";
-    }
-    
-    public String editar(int id){
+    public void editar(int id){
         objeto = dao.localizar(id);
-        return "formulario";
     }
     
     public void excluir(){
@@ -70,19 +60,19 @@ public class ControleLocatario extends Pessoa implements Serializable{
         }
     }
     
-    public LocatarioDao getDao() {
+    public RecursoDao getDao() {
         return dao;
     }
 
-    public void setDao(LocatarioDao dao) {
+    public void setDao(RecursoDao dao) {
         this.dao = dao;
     }
 
-    public Locatario getObjeto() {
+    public Recurso getObjeto() {
         return objeto;
     }
 
-    public void setObjeto(Locatario objeto) {
+    public void setObjeto(Recurso objeto) {
         this.objeto = objeto;
     }
 }

@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.edu.fsul.controle;
+package br.edu.ifsul.controle;
 
-import br.edu.ifsul.dao.PessoaDao;
+import br.edu.ifsul.dao.LocatarioDao;
+import br.edu.ifsul.modelo.Locatario;
 import br.edu.ifsul.modelo.Pessoa;
 import br.edu.ifsul.util.UtilMensagens;
 import java.io.Serializable;
@@ -16,27 +17,33 @@ import javax.faces.bean.SessionScoped;
  *
  * @author Felipe
  */
-@ManagedBean(name = "controlePessoa")
+@ManagedBean(name = "controleLocatario")
 @SessionScoped
-public class ControlePessoa implements Serializable{
-    private PessoaDao dao;
-    private Pessoa objeto;
+public class ControleLocatario extends Pessoa implements Serializable{
+    private LocatarioDao<Locatario> dao;
+    private Locatario objeto;
 
-    public ControlePessoa() {
-        dao = new PessoaDao();
+    public ControleLocatario() {
+        dao = new LocatarioDao<>();
     }
     
     public String listar(){
-        return "/privado/pessoa/listar?faces-redirect=true";
+        return "/privado/locatario/listar?faces-redirect=true";
     }
     
     public String novo(){
-        objeto = new Pessoa();
+        objeto = new Locatario();
         return "formulario";
     }
     
     public String salvar(){
-        if(dao.salvar(objeto)){
+        boolean persistiu;
+        if(objeto.getId() == null){
+            persistiu = dao.persist(objeto);
+        }else{
+            persistiu = dao.merge(objeto);
+        }
+        if(persistiu){
             UtilMensagens.mensagemInformacao(dao.getMensagem());
             return "listar";
         }else{
@@ -56,27 +63,26 @@ public class ControlePessoa implements Serializable{
     }
     
     public void excluir(){
-        if(dao.remover(objeto)){
+        if(dao.remove(objeto)){
             UtilMensagens.mensagemInformacao(dao.getMensagem());
         }else{
             UtilMensagens.mensagemErro(dao.getMensagem());
         }
     }
     
-    public PessoaDao getDao() {
+    public LocatarioDao getDao() {
         return dao;
     }
 
-    public void setDao(PessoaDao dao) {
+    public void setDao(LocatarioDao dao) {
         this.dao = dao;
     }
 
-    public Pessoa getObjeto() {
+    public Locatario getObjeto() {
         return objeto;
     }
 
-    public void setObjeto(Pessoa objeto) {
+    public void setObjeto(Locatario objeto) {
         this.objeto = objeto;
     }
-    
 }
