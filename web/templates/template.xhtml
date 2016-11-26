@@ -19,8 +19,9 @@
                 <h:form id="menu">
                     <p:menu>
                         <p:submenu label="Cadastros">
-                            <p:menuitem action="#{controlePessoa.listar()}" value="Pessoa_old" ajax="false"/>
                             <p:menuitem action="#{controleLocatario.listar()}" value="Locatario" ajax="false"/>
+                            <p:menuitem action="#{controleRecurso.listar()}" value="Recurso" ajax="false"/>
+                            <p:menuitem action="#{controleCondominio.listar()}" value="Condominio" ajax="false"/>
                         </p:submenu>
                     </p:menu>
                 </h:form>

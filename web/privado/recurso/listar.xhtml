@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/templates/template.xhtml">
+        <ui:define name="titulo">Manutenção de Recursos</ui:define>
+        <ui:define name="conteudo">
+            <h:form id="formListagem">
+                <p:growl/>
+                <p:commandButton value="Novo" icon="ui-icon-plus" actionListener="#{controleRecurso.novo()}" oncomplete="PF('dlg').show();" update=":formEdicao"/>
+                <div align="center">
+                    <p:panelGrid columns="11">
+                        <p:outputLabel value="Ordem"/>
+                        <p:selectOneMenu value="#{controleRecurso.dao.ordem}">
+                            <f:selectItem itemLabel="ID" itemValue="id"/>
+                            <f:selectItem itemLabel="Descrição" itemValue="descricao"/>
+                            <p:ajax update="listagem" event="keyup" delay="2000"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="filtro"/>
+                        <p:inputText value="#{controleRecurso.dao.filtro}" size="15"/>
+                        <p:commandButton value="Filtrar" update="listagem"/>
+                        <p:outputLabel value="Máximo Objetos"/>
+                        <p:inputNumber value="#{controleRecurso.dao.maximoObjeto}" decimalPlaces="0" decimalSeparator="" thousandSeparator="" size="3"/>
+                        <p:commandButton actionListener="#{controleRecurso.dao.primeiro()}" icon="ui-icon-seek-first" update="listagem" title="Primeiro"/>
+                        <p:commandButton actionListener="#{controleRecurso.dao.anterior()}" icon="ui-icon-seek-prev" update="listagem" title="Anterior"/>
+                        <p:commandButton actionListener="#{controleRecurso.dao.proxima()}" icon="ui-icon-seek-next" update="listagem" title="Proximo"/>
+                        <p:commandButton actionListener="#{controleRecurso.dao.ultimo()}" icon="ui-icon-seek-end" update="listagem" title="Ultimo"/>
+                    </p:panelGrid>
+                </div>
+                <p:dataTable value="#{controleRecurso.dao.listaObjetos}" var="obj" id="listagem" emptyMessage="Nenhum registro encontrado">
+                    <f:facet name="footer">
+                        <p:outputLabel value="#{controleRecurso.dao.mensagemNavegacao}"/>
+                    </f:facet>
+                    <p:column headerText="ID">
+                        <p:outputLabel value="#{obj.id}"/>
+                    </p:column>
+                    <p:column headerText="Pessoa Juridica">
+                        <p:outputLabel value="#{obj.descricao}"/>
+                    </p:column>
+                    <p:column>
+                        <div align="center">
+                            <p:commandButton actionListener="#{controleRecurso.editar(obj.id)}" icon="ui-icon-pencil" title="Editar"  oncomplete="PF('dlg').show();" update=":formEdicao"/>
+                            <p:commandButton actionListener="#{controleRecurso.excluir() }" icon="ui-icon-trash" title="Remover" 
+                                             update="@form" onclick="if(!confirm('Confirma a exclusão')) return false"/>
+                        </div>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </ui:define>
+        <ui:define name="dialogos">
+            <p:dialog widgetVar="dlg" header="Edição" modal="true" resizable="false">
+                <h:form id="formEdicao">
+                    <p:growl/>
+                    <div align="center">
+                        <p:panelGrid columns="2">
+                            <f:facet name="footer">
+                                <div align="center">
+                                    <p:commandButton value="Salvar" icon="ui-icon-disk" actionListener="#{controleRecurso.salvar()}" 
+                                                     oncomplete="if(!args.validationFailed){PF('dlg').hide();}" update=":formListagem :formEdicao"/>
+                                </div>
+                            </f:facet>
+                            <p:outputLabel value="ID"/>
+                            <p:inputText value="#{controleRecurso.objeto.id}" readonly="true" size="6"/>
+                            <p:outputLabel value="Descrição" for="txtDescr"/>
+                            <p:inputText id="txtDescr" value="#{controleRecurso.objeto.descricao}" size="50" maxlength="50" placeholder="Obrigatorio"/>
+                        </p:panelGrid>
+                    </div>
+                </h:form>
+                <ui:include src="/templates/ajaxstatus.xhtml"/>
+            </p:dialog>
+        </ui:define>
+    </ui:composition>
+</html>

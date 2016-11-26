@@ -19,11 +19,11 @@ import javax.faces.bean.SessionScoped;
 @ManagedBean(name = "controlePessoa")
 @SessionScoped
 public class ControlePessoa implements Serializable{
-    private PessoaDao dao;
+    private PessoaDao<Pessoa> dao;
     private Pessoa objeto;
 
     public ControlePessoa() {
-        dao = new PessoaDao();
+        dao = new PessoaDao<>();
     }
     
     public String listar(){
@@ -36,7 +36,13 @@ public class ControlePessoa implements Serializable{
     }
     
     public String salvar(){
-        if(dao.salvar(objeto)){
+        boolean persistiu;
+        if(objeto.getId() == null){
+            persistiu = dao.persist(objeto);
+        }else{
+            persistiu = dao.merge(objeto);
+        }
+        if(persistiu){
             UtilMensagens.mensagemInformacao(dao.getMensagem());
             return "listar";
         }else{
@@ -56,7 +62,7 @@ public class ControlePessoa implements Serializable{
     }
     
     public void excluir(){
-        if(dao.remover(objeto)){
+        if(dao.remove(objeto)){
             UtilMensagens.mensagemInformacao(dao.getMensagem());
         }else{
             UtilMensagens.mensagemErro(dao.getMensagem());
@@ -78,5 +84,4 @@ public class ControlePessoa implements Serializable{
     public void setObjeto(Pessoa objeto) {
         this.objeto = objeto;
     }
-    
 }
